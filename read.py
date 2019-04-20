@@ -1,24 +1,24 @@
 # -*- coding:utf8 -*-
-import time
 import random
+import os
 from datetime import datetime
-import nfc
-from binascii import hexlify
 
-from play import *
+import nfc
+
+import play
 
 dedenflag = True
 soundsflag = True
 
 date = datetime.now()
-csv_name = 'attend'+date.strftime('%m-%d')
+csv_name = 'attend-'+date.strftime('%m%d%H%M')
 path = 'csvs/'+csv_name+'.csv'
 
-now_time = date.strftime('%m/%d %H:%M:%s')
+now_time = date.strftime('%m/%d-%H:%M')
+
 
 def on_connect(tag):
     try:
-        flag = True
         idm, pmm = tag.polling(system_code=0x85d1)
         tag.idm, tag.pmm, tag.sys = idm, pmm, 0x85d1
 
@@ -30,23 +30,24 @@ def on_connect(tag):
             with open(path, 'a') as f:
                 f.write(data[:8]+'\n')
             if random.randrange(100) <= 4:
-                sugoi()
+                play.sugoi()
             else:
-                pinpon()
+                play.pinpon()
             print('>>> OK')
         except Exception as e:
-            bubu()
+            play.bubu()
             print('>>> error')
             print('>>> ', e)
     except Exception as e:
         print('>>> ', e)
-        bubu()
+        play.bubu()
+
 
 def released(tag):
-    flag = False
     print("released:")
     if tag.ndef:
         print(tag.ndef.message.pretty())
+
 
 def main():
     with nfc.ContactlessFrontend('usb') as clf:
@@ -57,18 +58,21 @@ def main():
 
 
 if __name__ == '__main__':
-    flag = False
+    if not os.path.exists('csvs'):
+        print('create csv folder')
+        os.makedirs('csvs')
+    if not os.path.exists(path):
+        print('make new csv file')
+        with open(path, 'w') as f:
+            f.write(now_time+', num\n')
 
-    with open(path, 'w') as f:
-        f.write(now_time+'num\n')
     while True:
         input = raw_input('>>> ')
-        if input != 'z':
+        if input != 'exit':
             print('>>> ready')
             if dedenflag:
-                deden()
+                play.deden()
             main()
         else:
             print('>>> exit')
             break
-

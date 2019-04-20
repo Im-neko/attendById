@@ -16,6 +16,4 @@ brew install portaudio
 
 pip install -r pip-list.txt
 
-mkdir -p csvs
-
 python read.py
