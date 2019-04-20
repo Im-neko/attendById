@@ -14,8 +14,6 @@ date = datetime.now()
 csv_name = 'attend-'+date.strftime('%m%d%H%M')
 path = 'csvs/'+csv_name+'.csv'
 
-now_time = date.strftime('%m/%d-%H:%M')
-
 
 def on_connect(tag):
     try:
@@ -27,8 +25,9 @@ def on_connect(tag):
         data = tag.read_without_encryption([sc], [bc])
         print '>>> ', data[:8]
         try:
+            touch_time = datetime.now().strftime('%H:%M:%S')
             with open(path, 'a') as f:
-                f.write(data[:8]+'\n')
+                f.write(touch_time+', '+data[:8]+'\n')
             if random.randrange(100) <= 4:
                 play.sugoi()
             else:
@@ -64,7 +63,7 @@ if __name__ == '__main__':
     if not os.path.exists(path):
         print('make new csv file')
         with open(path, 'w') as f:
-            f.write(now_time+', num\n')
+            f.write('touch_time, num\n')
 
     while True:
         input = raw_input('>>> ')
