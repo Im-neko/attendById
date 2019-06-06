@@ -1,6 +1,7 @@
 # -*- coding:utf8 -*-
 import random
 import os
+from threading import Thread
 from datetime import datetime
 
 import nfc
@@ -19,7 +20,6 @@ def on_connect(tag):
     try:
         idm, pmm = tag.polling(system_code=0x85d1)
         tag.idm, tag.pmm, tag.sys = idm, pmm, 0x85d1
-
         sc = nfc.tag.tt3.ServiceCode(68, 0x0b)
         bc = nfc.tag.tt3.BlockCode(1, service=0)
         data = tag.read_without_encryption([sc], [bc])
@@ -28,7 +28,7 @@ def on_connect(tag):
             touch_time = datetime.now().strftime('%H:%M:%S')
             with open(path, 'a') as f:
                 f.write(touch_time+', '+data[:8]+'\n')
-            if random.randrange(100) <= 4:
+            if random.randrange(100) <= 2:
                 play.sugoi()
             else:
                 play.pinpon()
@@ -43,7 +43,6 @@ def on_connect(tag):
 
 
 def released(tag):
-    print("released:")
     if tag.ndef:
         print(tag.ndef.message.pretty())
 
