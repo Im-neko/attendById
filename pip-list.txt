@@ -1,2 +1,5 @@
-nfcpy==0.13.5
+libusb1==1.7
+ndeflib==0.3.2
+nfcpy==1.0.1
 PyAudio==0.2.11
+pyserial==3.4
